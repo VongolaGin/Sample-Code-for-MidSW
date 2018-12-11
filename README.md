@@ -28,7 +28,7 @@ Defined the next elements:
 
 Implements the element on the controller with the next logic:
 
-first, receive the worked files (well-structured excels) and the total excel files (a files with have inventary pieces and sales prices of products).
+first, receive the worked files (well-structured excels) and the total excel files (a files with have inventary pieces and sales prices of products), also update a process status on the database and notify to the front-end via WebSockets.
 then, we validate the format files and if the users have uploaded the files before, if not, throws an exception (all knew exceptions have predefined messages).
 after the validation, we process the totals excel file before the worked ones, because convenience.
 The total excel process and the worked file process are the same, and consists on validate the number of columns, name of columns and the data types from the values.
@@ -37,7 +37,7 @@ just works with CSV and XML files.
 when the totals csv and worked files csv's are generated we proceed to call the bulk insert on these but not before we apply a trash data analyse 
 for prevent redundant data on the table target.
 Then, we call a stored procedure to purify the uploaded data.
-Finally, if all was OK, the files are stored and versioned on a directory which can be compressed and downloaded on a zip.
+Finally, if all was OK, the files are stored and versioned on a directory which can be compressed and downloaded on a zip and the process status is set to finished/completed.
 
 Note:
 This codes will, obviously, do not work without the proyect context.
