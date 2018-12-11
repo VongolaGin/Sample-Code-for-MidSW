@@ -1,0 +1,179 @@
+(function() {
+    'use strict';
+
+    angular
+        .module('iscamApp')
+        .controller('CargaArchivoTrabajadoController', CargaArchivoTrabajadoController);
+
+    CargaArchivoTrabajadoController.$inject = ['$cookieStore', 'previousState', '$state', '$stateParams', '$scope','CargaArchivoTrabajado', 'GeneralFunctions', 'HandlerResponse', 'Informante', 'AlertService', '$translate', 'FileSaver','PeriodoOperativo',
+        '$element', '$uibModal'];
+
+    function CargaArchivoTrabajadoController($cookieStore, previousState, $state, $stateParams, $scope, CargaArchivoTrabajado, GeneralFunctions, HandlerResponse,Informante,AlertService,$translate,FileSaver,PeriodoOperativo,
+                                             $element, $uibModal) {
+        var vm = this;
+        //Datos iniciales
+        vm.modalHtml = $element[0].querySelector("#cargaArchivoLoadingModal").innerHTML;
+        vm.idInformante = $stateParams.llave;
+        vm.idPeriodo = $stateParams.idPeriodo;
+        vm.secuenciaProceso = $stateParams.secuenciaProceso;
+        vm.nivelDetalle = $stateParams.idNivelDetalle;
+        vm.llave = $stateParams.llave;
+        vm.reverse = false;
+        vm.date = new Date();
+        vm.loadMethod = 1;
+        vm.fileTypes = [{name: 'Inventario', value: 1},
+                        {name: 'Venta', value: 2},
+                        {name: 'Mixto', value: 3}];
+
+        //Variables
+        vm.loadingCargaModal = null;
+        vm.cargaArchivoSuccess = false;
+        vm.files = [];
+        vm.fileTypesSelected = [];
+        vm.tipoPeriodo = null;
+        vm.periodo = null;
+        getPeriodo();
+        vm.totalFile = [];
+        vm.replacement = 1;
+        vm.tipoPeriodoCarga = null;
+        vm.periodoCarga = null;
+
+        //Métodos
+        vm.removeSelectedFile = removeSelectedFile;
+        vm.sendFiles = sendFiles;
+        vm.cancel = goback;
+        vm.downloadFile = downloadFile;
+
+        // Métodos de validación
+        vm.invalid = invalid;
+
+        vm.$onInit = init;
+        //Función de arraque
+        function init() {
+            $scope.$watch('vm.idInformante', function () {
+                vm.totalFile = [];
+                vm.files = [];
+            });
+            $scope.$watch('vm.periodo', function (periodo) {
+                if(angular.isDefined(periodo) && periodo !== null) {
+                    getFilesOfInformante();
+                }
+            });
+        }
+
+        function getPeriodo() {
+            if(angular.isDefined(vm.idPeriodo) && !angular.equals(vm.idPeriodo,null)){
+                PeriodoOperativo.get({id: vm.idPeriodo},function (periodo) {
+                    vm.periodo = periodo;
+                    vm.periodoCarga = angular.copy(periodo);
+                });
+            }
+        }
+
+        function removeSelectedFile(fileIndex) {
+            vm.files.splice(fileIndex, 1);
+        }
+
+        function invalid() {
+            var tipoPeriodoInvalid = !vm.tipoPeriodo;
+            var periodoInvalid = !vm.periodoCarga;
+            var filesInvalid = !vm.files || vm.files.length <= 0;
+            var totalsInvalid = !vm.totalFile || vm.totalFile.length <= 0;
+            var fileTypesInvalid = vm.fileTypesSelected.some(
+                function (selectedType) { return vm.fileTypes.findIndex(function (type) { return selectedType == type.value}) === -1}
+            );
+            return tipoPeriodoInvalid || periodoInvalid || filesInvalid || /*fileTypesInvalid ||*/ totalsInvalid;
+        }
+
+        function sendFiles() {
+            //vm.loadingCarga = true;
+            vm.loadingCargaModal = showLoadingModal(true);
+            var body = new FormData();
+            var files = GeneralFunctions.listToArray(vm.files);
+            angular.forEach(files, function (file) {
+                body.append("archivosTrabajados", file)
+            });
+            body.append("totales", vm.totalFile[0]);
+            body.append("uploadMethod", vm.loadMethod);
+            body.append("idInformante", vm.idInformante);
+            body.append("idPeriodo", vm.periodoCarga.id);
+            body.append("replacement", vm.replacement);
+            body.append("secuenciaProceso", vm.secuenciaProceso);
+            body.append("nivelDetalle", vm.nivelDetalle);
+            body.append("secuencia", 0);
+            body.append("idMercado", -99);
+
+            CargaArchivoTrabajado.upload(body)
+                .$promise
+                .then(function () { goback()})
+                .catch(function (error) {HandlerResponse.handleError(error)})
+                .finally(function() {vm.loadingCargaModal.close()});
+        }
+
+        function getFilesOfInformante() {
+            if(vm.idInformante !== null) {
+                Informante.filesDetail({
+                    'informanteId': vm.idInformante,
+                    'periodo': vm.periodo.acronimo
+                }, function (data) {
+                    vm.filesInformante = data;
+                }, onError);
+            }
+
+        }
+
+        function onError(error) {
+            if(error === null || error.data === null){
+                AlertService.error($translate.instant('error.http.500'));
+            } else
+                AlertService.error(error.data.message);
+        }
+
+        function goback(){
+            vm.loadingCarga = false;
+            $cookieStore.put('tableroTab', 0);
+            if(previousState && previousState !== '') {
+                $state.go(previousState,{idPeriodo:vm.periodoCarga.id});
+            }else{
+                $state.go('^', {idPeriodo:vm.periodoCarga.id});
+            }
+        }
+
+        function downloadFile(ruta) {
+            Informante.downloadFile({'ruta':ruta},function (data) {
+                if(data.response.size !== 0) {
+                    FileSaver.saveAs(data.response, data.fileName);
+                }else{
+                    AlertService.error($translate.instant('error.fileNotFound'));
+                }
+            },onError);
+        }
+
+        function showLoadingModal (show) {
+            if (!show )
+                vm.loadingCargaModal.close();
+            else {
+                return $uibModal.open({
+                    template: vm.modalHtml,
+                    backdrop: 'static',
+                    keyboard: false,
+                    controller: ['$scope', '$uibModalInstance', function ($scope, $uibModalInstance) {
+                        $scope.success = vm.cargaArchivoSuccess;
+                        $scope.goback = goback;
+                        // $scope.hide = function () {
+                        //     $uibModalInstance.close();
+                        //     $scope.success = false;
+                        // };
+                        //
+                        // $scope.changeSuccess = function () {
+                        //     $scope.success = true;
+                        // };
+                        //
+                        // vm.changeSuccess = $scope.changeSuccess;
+                        // vm.hide = $scope.hide;
+                    }]
+                });
+            }
+        }
+    }
+})();

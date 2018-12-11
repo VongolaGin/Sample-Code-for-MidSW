@@ -1,0 +1,244 @@
+<pre>&lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;row v-align&quot; style=&quot;text-align: center; height: 80px&quot; ng-init=&quot;vm.selectedUploadSection = 0&quot;&gt;
+        &lt;div class=&quot;col-md-3 col-lg-3&quot;&gt;&lt;/div&gt;
+        &lt;label class=&quot;col-md-3 col-lg-3&quot;&gt;
+            &lt;input type=&quot;radio&quot; ng-model=&quot;vm.selectedUploadSection&quot; name=&quot;selectedUploadSection&quot; value=&quot;0&quot;/&gt;
+            &lt;span class=&quot;subtitle&quot; style=&quot;padding-left: 7px&quot; data-translate=&quot;cargaArchivos.tabs.archivosOriginales&quot;&gt;&lt;/span&gt;
+        &lt;/label&gt;
+        &lt;div style=&quot;height: 50%; border: .2px lightgrey solid;&quot;&gt;&lt;/div&gt;
+        &lt;label class=&quot;col-md-3 col-lg-3&quot;&gt;
+            &lt;input type=&quot;radio&quot; ng-model=&quot;vm.selectedUploadSection&quot; name=&quot;selectedUploadSection&quot; value=&quot;1&quot;/&gt;
+            &lt;span class=&quot;subtitle&quot; style=&quot;padding-left: 7px&quot; data-translate=&quot;cargaArchivos.tabs.archivosTrabajados&quot;&gt;&lt;/span&gt;
+        &lt;/label&gt;
+        &lt;div class=&quot;col-md-3 col-lg-3&quot;&gt;&lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div ng-show=&quot;vm.selectedUploadSection == 0&quot;&gt;
+        &lt;div class=&quot;row text-center&quot;&gt;
+            &lt;div class=&quot;col-lg-offset-4 col-sm-offset-4 col-sm-4 col-md-4 col-sm-4&quot;&gt;
+                &lt;combo-box-periodo
+                    id=&quot;archivo-periodo&quot;
+                    label-tipo-periodo=&quot;Tipo periodo&quot;
+                    label-periodo=&quot;Periodo&quot;
+                    tipo-periodo=&quot;vm.tipoPeriodo&quot;
+                    periodo=&quot;vm.periodo&quot;
+                    orientation=&quot;horizontal&quot;&gt;
+                &lt;/combo-box-periodo&gt;
+            &lt;/div&gt;
+            &lt;div id=&quot;downloadOriginalByPeriod&quot; class=&quot;col-sm-2 col-md-2 col-sm-2&quot; &gt;
+                &lt;descarga-por-periodo
+                    id-informante=&quot;{{vm.idInformante}}&quot;
+                    trabajado=&quot;false&quot;
+                    button-label=&quot;Descargar periodo&quot;
+                    id-periodo=&quot;{{vm.periodo.id}}&quot;
+                &gt;&lt;/descarga-por-periodo&gt;
+            &lt;/div&gt;
+            &lt;div id=&quot;&quot; class=&quot;col-md-2 col-lg-2&quot;&gt;
+                &lt;button type=&quot;button&quot; class=&quot;btn btn-danger&quot; data-dismiss=&quot;modal&quot; ng-click=&quot;vm.cancel()&quot;&gt;
+                    &lt;!--&lt;span class=&quot;glyphicon glyphicon-ban-circle&quot;&gt;&lt;/span&gt;&amp;nbsp; --&gt;
+                    &lt;span data-translate=&quot;entity.action.cancel&quot;&gt;Cancel&lt;/span&gt;
+                &lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;row&quot;&gt;
+            &lt;div class=&quot;table-responsive&quot;&gt;
+                &lt;table class=&quot;table jh-table table-striped table-hover&quot;&gt;
+                    &lt;thead&gt;
+                    &lt;tr&gt;
+                        &lt;th class=&quot;col-sm-1&quot;&gt;&lt;span data-translate=&quot;home.id&quot;&gt;&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-sm-5&quot;&gt;&lt;span data-translate=&quot;home.name&quot;&gt;&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-sm-3&quot;&gt;&lt;span data-translate=&quot;home.observacion&quot;&gt;&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-sm-2&quot;&gt;&lt;span data-translate=&quot;home.dateUpload&quot;&gt;&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-sm-1 text-center&quot;&gt;&lt;span data-translate=&quot;home.action&quot;&gt;&lt;/span&gt;&lt;/th&gt;
+                    &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                    &lt;tr ng-repeat=&quot;detalle in vm.filesInformante&quot;&gt;
+                        &lt;td&gt;{{detalle[0]}}&lt;/td&gt;
+                        &lt;td&gt;{{detalle[1]}}&lt;/td&gt;
+                        &lt;td&gt;&lt;/td&gt;
+                        &lt;td&gt;{{detalle[3] | date: &#39;dd/MM/yyyy&#39;}}&lt;/td&gt;
+                        &lt;td class=&quot;text-center&quot;&gt;
+                            &lt;div class=&quot;btn-group&quot;&gt;
+                                &lt;button type=&quot;submit&quot;
+                                        has-authority=&quot;&quot;
+                                        ng-click=&quot;vm.downloadFile(detalle[2])&quot;
+                                        class=&quot;btn btn-default btn-lg&quot;
+                                        uib-tooltip=&quot;{{&#39;entity.action.download&#39; | translate}}&quot;
+                                        tooltip-append-to-body=&quot;true&quot;&gt;
+                                    &lt;span class=&quot;glyphicon glyphicon-download&quot;&gt;&lt;/span&gt;
+                                    &lt;!--&lt;span class=&quot;hidden-sm-down&quot; data-translate=&quot;entity.action.view&quot;&gt;&lt;/span&gt;--&gt;
+                                &lt;/button&gt;
+                            &lt;/div&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+    &lt;/div&gt;
+    &lt;div ng-show=&quot;vm.selectedUploadSection == 1&quot;&gt;
+        &lt;div class=&quot;container-fluid&quot; style=&quot;position: relative&quot;&gt;
+            &lt;div id=&quot;downloadByPeriod&quot;&gt;
+                &lt;descarga-por-periodo
+                    ng-if=&quot;vm.selectedUploadSection == 1&quot;
+                    id-informante=&quot;{{vm.idInformante}}&quot;
+                    trabajado=&quot;true&quot;
+                    button-label=&quot;Descargar periodo&quot;
+                    id-periodo=&quot;{{vm.periodoCarga.id}}&quot;
+                &gt;&lt;/descarga-por-periodo&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;panel row&quot;&gt;
+                &lt;combo-box-periodo
+                    id=&quot;carga-archivo-periodo&quot;
+                    class=&quot;col-md-3 col-lg-3&quot;
+                    label-tipo-periodo=&quot;Tipo periodo&quot;
+                    label-periodo=&quot;Periodo&quot;
+                    tipo-periodo=&quot;vm.tipoPeriodoCarga&quot;
+                    periodo=&quot;vm.periodoCarga&quot;
+                    orientation=&quot;horizontal&quot;&gt;
+                &lt;/combo-box-periodo&gt;
+                &lt;div class=&quot;col-md-4 col-lg-4 files&quot;&gt;
+                    &lt;file-uploader
+                        id=&quot;trabajados-input&quot;
+                        label=&quot;Seleccionar documentos&quot;
+                        button-label=&quot;Examinar...&quot;
+                        files=&quot;vm.files&quot;
+                        multiple=&quot;true&quot;
+                        accept=&quot;.xlsx&quot;
+                    &gt;
+                    &lt;/file-uploader&gt;
+                    &lt;file-uploader
+                        id=&quot;totales-input&quot;
+                        label=&quot;&quot;
+                        button-label=&quot;Subir totales&quot;
+                        files=&quot;vm.totalFile&quot;
+                        only-button=&quot;true&quot;
+                        without-label=&quot;true&quot;
+                        accept=&quot;.xlsx&quot;
+                    &gt;
+                    &lt;/file-uploader&gt;
+                    &lt;span class=&quot;glyphicon glyphicon-ok&quot; style=&quot;color: #0b8043; padding: 0&quot; ng-show=&quot;vm.totalFile.length === 1&quot;&gt;&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div id=&quot;uploadMethods&quot; class=&quot;col-md-3 col-lg-3&quot; style=&quot;padding-top: 0&quot;&gt;
+                    &lt;label class=&quot;control-label&quot;&gt; Método de carga: &lt;/label&gt;&lt;br/&gt;
+                    &lt;label class=&quot;control-label without-margin&quot;&gt;
+                        &lt;input type=&quot;radio&quot; ng-model=&quot;vm.loadMethod&quot; value=&quot;1&quot;&gt;
+                        Nuevo
+                    &lt;/label&gt;
+                    &lt;label class=&quot;control-label without-margin&quot;&gt;
+                        &lt;input type=&quot;radio&quot; ng-model=&quot;vm.loadMethod&quot; value=&quot;2&quot;&gt;
+                        Conservar
+                    &lt;/label&gt;
+                    &lt;label class=&quot;control-label without-margin&quot;&gt;
+                        &lt;input type=&quot;radio&quot; ng-model=&quot;vm.loadMethod&quot; value=&quot;3&quot;&gt;
+                        Reemplazar
+                    &lt;/label&gt;
+                    &lt;br/&gt;
+                    &lt;div id=&quot;replacementType&quot; style=&quot;text-align: right&quot; ng-show=&quot;vm.loadMethod == 3&quot;&gt;
+                        &lt;hr style=&quot;margin: 2px 0 2px 0&quot;/&gt;
+                        &lt;label class=&quot;control-label&quot; style=&quot;margin-top: 5px&quot;&gt;
+                            &lt;input type=&quot;radio&quot; ng-model=&quot;vm.replacement&quot; value=&quot;1&quot;&gt;
+                            Ventas e Inventarios
+                        &lt;/label&gt;
+                        &lt;label class=&quot;control-label&quot; style=&quot;margin-top: 5px&quot;&gt;
+                            &lt;input type=&quot;radio&quot; ng-model=&quot;vm.replacement&quot; value=&quot;2&quot;&gt;
+                            Solo Ventas
+                        &lt;/label&gt;
+                        &lt;label class=&quot;control-label&quot; style=&quot;margin-top: 5px&quot;&gt;
+                            &lt;input type=&quot;radio&quot; ng-model=&quot;vm.replacement&quot; value=&quot;3&quot;&gt;
+                            Solo Inventarios
+                        &lt;/label&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+
+                &lt;!-- Guardar y Cancelar --&gt;
+                &lt;div id=&quot;sendFilesButtons&quot; class=&quot;col-md-2 col-lg-2&quot;&gt;
+                    &lt;button
+                        ng-disabled=&quot;vm.invalid()&quot;
+                        class=&quot;btn btn-primary&quot;
+                        ng-click=&quot;vm.sendFiles()&quot;
+                    &gt;
+                        &lt;span class=&quot;glyphicon glyphicon-open&quot;&gt;&lt;/span&gt;&amp;nbsp;&lt;span
+                        data-translate=&quot;entity.action.sendAndGoBack&quot;&gt;Enviar&lt;/span&gt;
+                    &lt;/button&gt;
+                    &lt;button type=&quot;button&quot; class=&quot;btn btn-danger&quot; data-dismiss=&quot;modal&quot; ng-click=&quot;vm.cancel()&quot;&gt;
+                        &lt;!--&lt;span class=&quot;glyphicon glyphicon-ban-circle&quot;&gt;&lt;/span&gt;&amp;nbsp; --&gt;
+                        &lt;span data-translate=&quot;entity.action.cancel&quot;&gt;Cancel&lt;/span&gt;
+                    &lt;/button&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;!-- Tabla de archivos seleccionados --&gt;
+            &lt;div class=&quot;table-responsive&quot;&gt;
+                &lt;table class=&quot;jh-table table table-striped table-condensed&quot;&gt;
+                    &lt;thead&gt;
+                    &lt;tr class=&quot;headers&quot; ascending=&quot;vm.reverse&quot;&gt;
+                        &lt;th class=&quot;col-md-2 hidden&quot;&gt;&lt;span&gt;Tipo de archivo&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-md-2&quot;&gt;&lt;span&gt;Nombre de archivo&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-md-2&quot;&gt;&lt;span&gt;Fecha subida&lt;/span&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-md-5&quot;&gt;&lt;/th&gt;
+                        &lt;th class=&quot;col-md-1&quot;&gt;&lt;span&gt;Acciones&lt;/span&gt;&lt;/th&gt;
+                    &lt;/tr&gt;
+                    &lt;/thead&gt;
+                    &lt;tbody&gt;
+                    &lt;tr ng-repeat=&quot;file in vm.files track by file.name&quot;&gt;
+                        &lt;td hidden&gt;
+                            &lt;select class=&quot;form-control tipo-archivo-select&quot; ng-model=&quot;vm.fileTypesSelected[$index]&quot;
+                                    required
+                                    ng-init=&quot;vm.fileTypesSelected[$index] = vm.fileTypes[$first]&quot;
+                                    ng-options=&quot;filetype.value as filetype.name for filetype in vm.fileTypes&quot; required&gt;
+                            &lt;/select&gt;
+                        &lt;/td&gt;
+                        &lt;td&gt;{{file.name}}&lt;/td&gt;
+                        &lt;td&gt;{{vm.date | date:&#39;dd/MM/yyyy&#39;}}&lt;/td&gt;
+                        &lt;td&gt;&lt;/td&gt;
+                        &lt;td class=&quot;text-center&quot;&gt;
+                            &lt;div class=&quot;btn-group flex-btn-group-container&quot;&gt;
+                                &lt;button class=&quot;btn btn-lg&quot;
+                                        uib-tooltip=&quot;Eliminar&quot;
+                                        ng-click=&quot;vm.removeSelectedFile($index)&quot;
+                                        tooltip-append-to-body=&quot;true&quot;&gt;
+                                    &lt;span class=&quot;glyphicon glyphicon-remove-circle&quot; style=&quot;color: red;&quot;&gt;&lt;/span&gt;
+                                &lt;/button&gt;
+                            &lt;/div&gt;
+                        &lt;/td&gt;
+                    &lt;/tr&gt;
+                    &lt;tr ng-if=&quot;!vm.files || vm.files.length == 0&quot;&gt;
+                        &lt;th colspan=&quot;8&quot;&gt;Ningún archivo seleccionado&lt;/th&gt;
+                    &lt;/tr&gt;
+
+                    &lt;/tbody&gt;
+                &lt;/table&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div ng-hide=&quot;true&quot; id=&quot;cargaArchivoLoadingModal&quot;&gt;
+        &lt;!-- Modal Container --&gt;
+        &lt;div&gt;
+            &lt;div class=&quot;modal-header loading-header&quot;&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;modal-body loading-body&quot;&gt;
+                &lt;!-- se muestra cargando --&gt;
+                &lt;div style=&quot; text-align: center&quot; ng-show=&quot;!success&quot;&gt;
+                    &lt;h2&gt;Cargando archivos...&lt;/h2&gt;
+                &lt;/div&gt;
+
+                &lt;!-- se activa el completado! --&gt;
+                &lt;div ng-show=&quot;success&quot; style=&quot;text-align: center&quot;&gt;
+                    &lt;h2&gt;Completado!&lt;span class=&quot;glyphicon glyphicon-ok&quot; style=&quot;color: #0b8043&quot;&gt;&lt;/span&gt;&amp;nbsp;&lt;/h2&gt;
+                    &lt;div class=&quot;buttons&quot; style=&quot;text-align: center&quot;&gt;
+                        &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot; ng-click=&quot;goback()&quot;&gt;
+                            &lt;span data-translate=&quot;entity.action.accept&quot;&gt;Aceptar&lt;/span&gt;
+                        &lt;/button&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+
+
+</pre>
